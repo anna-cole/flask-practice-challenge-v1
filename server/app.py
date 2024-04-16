@@ -1,4 +1,4 @@
-from config import app, api, db
+from config import app, api
 from models import Post, Comment
 from flask_restful import Resource
 from sqlalchemy import func
@@ -28,9 +28,9 @@ class SortPostsByComments(Resource):
 
 class MostPopularCommenter(Resource):
   def get(self):
-    commenter_counts = Comment.query.with_entities(Comment.commenter, func.count(Comment.commenter)).group_by(Comment.commenter).all()
-    most_popular_commenter = max(commenter_counts, key=lambda x: x[1])[0]
-    return {"commenter": most_popular_commenter}, 20
+    commenter_counts = Comment.query.with_entities(Comment.commenter, func.count(Comment.commenter)).group_by(Comment.commenter).all() # list of tuples, where each tuple contains the commenter's name and the count of their comments.
+    most_popular_commenter = max(commenter_counts, key=lambda x: x[1])[0] # finds the tuple with the highest count by using the key argument with a lambda function that extracts the count from each tuple.[0] retrieves the commenter's name from the tuple with the highest count.
+    return {"commenter": most_popular_commenter}, 200
 
 api.add_resource(Posts, '/api/sorted_posts')
 api.add_resource(PostsByAuthor, '/api/posts_by_author/<string:author>')
